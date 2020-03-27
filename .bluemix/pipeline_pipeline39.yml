@@ -1,0 +1,32 @@
+stages:
+- inputs:
+  - branch: release
+    dir_name: null
+    type: git
+    service: gitlab21
+  jobs:
+  - BUILD_COMMAND: "#!/bin/bash\n# environment variables are available:\n# MAVEN_NAME:
+      name of the service instance\n# MAVEN_USER_ID: userid for the maven repository\n#
+      MAVEN_TOKEN: the token or password for the maven repository\n# MAVEN_SNAPSHOT_URL:
+      the maven snapshot repository\n# MAVEN_RELEASE_URL: the maven release repository\n#
+      MAVEN_MIRROR_URL: the maven mirror repository\n# SONAR_INSTANCE_NAME: the name
+      of the SonarQube instance\n# SONAR_SERVER_URL: the url of the SonarQube server\n#
+      SONAR_USER_ID: SonarQube user name\n# SONAR_USER_TOKEN: SonarQube password or
+      authentication token\n# The settings.xml is available in $HOME/.m2/settings.xml\n#
+      The name of the snapshots repository is 'snapshots'\n# The name of the release
+      repository is 'releases'\n# The name of the mirror repository is 'central'\n\nmvn
+      -B clean package \nmvn -B -DaltSnapshotDeploymentRepository=snapshots::default::${MAVEN_SNAPSHOT_URL}
+      -DaltReleaseDeploymentRepository=releases::default::${MAVEN_RELEASE_URL} install
+      org.apache.maven.plugins:maven-deploy-plugin:2.8:deploy\n\n\n#send message\n\n#curl
+      -X POST -H 'Content-type: application/json' --data '{\"text\":\"Generada una
+      nueva versión de commons-entities\"}' https://hooks.slack.com/services/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"
+    SERVICE_INSTANCE: (default)
+    SERVICE_INSTANCE_TYPE: nexus
+    SONAR_SERVICE_INSTANCE: (default)
+    extension_id: ibm.devops.services.pipeline.maven.build.deploy
+    name: Compilación
+    type: builder
+  name: 'Compile '
+  permission:
+    execute: TOOLCHAIN_MEMBERS
+properties: []
